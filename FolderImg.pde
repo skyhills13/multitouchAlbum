@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Vector;
 
+import com.jogamp.common.util.RunnableExecutor.CurrentThreadExecutor;
+
 import processing.core.PImage;
 import TUIO.TuioClient;
 import TUIO.TuioCursor;
@@ -16,8 +18,11 @@ public class FolderImg extends FileObject {
   final static float CIRCLE_ANGLE = 360.0f; 
   
   private ArrayList<PictureImg> imgs;
-  //folder tab flag;
-  boolean isTapped = false;
+  //last tap id (unix time)
+  long lastTapTime = 0;
+  
+  //last session id
+  long lastSessionId = 0;
   
   FolderImg(float width, float height, float xPos, float yPos, String fileName) {
     super(width, height, xPos, yPos, fileName);
@@ -29,7 +34,7 @@ public class FolderImg extends FileObject {
   public void updateImageData(TuioClient client) {
     super.updateImageData(client);
     
-    if (isTapped) {
+    if (lastTapTime > 0) {
       for (PictureImg pictureImg : imgs) {
         pictureImg.updateImageData(client);
       }
@@ -48,7 +53,7 @@ public class FolderImg extends FileObject {
   public void display() {
     super.display();
     
-    if ( isTapped == true ) {
+    if ( lastTapTime > 0 ) {
       for (PictureImg img : imgs ) {
         img.display();
       } 
@@ -57,30 +62,72 @@ public class FolderImg extends FileObject {
   
   @Override
   public void touchOneFinger(Vector<TuioCursor> cursors) {
-    
    TuioCursor cursor = cursors.get(0);
+   
    if (cursor.getX() * SCREEN_SIZE_X <= getxRangeMax()
       && cursor.getX() * SCREEN_SIZE_X >= getxRangeMin()
       && cursor.getY() * SCREEN_SIZE_Y >= getyRangeMin()
       && cursor.getY() * SCREEN_SIZE_Y <= getyRangeMax()) {
-      
-    setPositionX(cursor.getX() * SCREEN_SIZE_X);
-    setPositionY(cursor.getY() * SCREEN_SIZE_Y);
-    
-    if ( isTapped == false ) {
-      float individualAngle = CIRCLE_ANGLE / imgs.size();
-      
-      for (int index = 1; index <= imgs.size(); ++index) {
-        PictureImg targetImg = imgs.get(index - 1);
+     
+    //drag
+    if ( lastSessionId == cursor.getSessionID() ) {
+      setPositionX(cursor.getX() * SCREEN_SIZE_X);
+      setPositionY(cursor.getY() * SCREEN_SIZE_Y);
+    } else {
+      //folded image
+      if ( lastTapTime == 0 ) {
+        float individualAngle = CIRCLE_ANGLE / imgs.size();
         
-        float newXPosition = (float) (RADIUS * Math.cos(Math.toRadians(index * individualAngle)));
-        float newYPosition = (float) (RADIUS * Math.sin(Math.toRadians(index * individualAngle)));
-        targetImg.setPositionX(getPositionX() + newXPosition);
-        targetImg.setPositionY(getPositionY() + newYPosition);
+        for (int index = 1; index <= imgs.size(); ++index) {
+          PictureImg targetImg = imgs.get(index - 1);
+          
+          float newXPosition = (float) (RADIUS * Math.cos(Math.toRadians(index * individualAngle)));
+          float newYPosition = (float) (RADIUS * Math.sin(Math.toRadians(index * individualAngle)));
+          targetImg.setPositionX(getPositionX() + newXPosition);
+          targetImg.setPositionY(getPositionY() + newYPosition);
+        }
+        lastTapTime = System.currentTimeMillis();
+        
+      //check double click
+      } else {
+        long intervalTapTime = System.currentTimeMillis() - lastTapTime;
+       
+        System.out.println("intervalTapTime : "+intervalTapTime);
+        if ( (1000 > intervalTapTime) && (intervalTapTime > 5) ) {
+          lastTapTime = 0;
+        } else {
+          lastTapTime = System.currentTimeMillis();
+        }
       }
-      
-      isTapped = true;//!(isTapped);
+      lastSessionId = cursor.getSessionID();
     }
+    
+//    setPositionX(cursor.getX() * SCREEN_SIZE_X);
+//    setPositionY(cursor.getY() * SCREEN_SIZE_Y);
+//    
+//    System.out.println("sessionId : "+cursor.getSessionID());
+//    
+//    if ( lastTapTime == 0 ) {
+//      float individualAngle = CIRCLE_ANGLE / imgs.size();
+//      
+//      for (int index = 1; index <= imgs.size(); ++index) {
+//        PictureImg targetImg = imgs.get(index - 1);
+//        
+//        float newXPosition = (float) (RADIUS * Math.cos(Math.toRadians(index * individualAngle)));
+//        float newYPosition = (float) (RADIUS * Math.sin(Math.toRadians(index * individualAngle)));
+//        targetImg.setPositionX(getPositionX() + newXPosition);
+//        targetImg.setPositionY(getPositionY() + newYPosition);
+//      }
+//      lastTapTime = System.currentTimeMillis();
+//      
+//    } else {
+//      long intervalTapTime = System.currentTimeMillis() - lastTapTime;
+//      System.out.println("intervalTapTime : "+intervalTapTime);
+//      if ( (500 > intervalTapTime) && (intervalTapTime > 5) ) {
+//        lastTapTime = 0;
+//      }
+//    }
+    
      }
   }
 

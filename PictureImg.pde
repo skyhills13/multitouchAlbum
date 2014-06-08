@@ -26,12 +26,12 @@ public class PictureImg extends FileObject {
             && tuioCursor.getY() * SCREEN_SIZE_Y >= getyRangeMin()
             && tuioCursor.getY() * SCREEN_SIZE_Y <= getyRangeMax()) {
 
-          System.out.println("got ya");
+          //System.out.println("got ya");
 
           setPositionX(tuioCursor.getX() * SCREEN_SIZE_X);
           setPositionY(tuioCursor.getY() * SCREEN_SIZE_Y);
         } else {
-          System.out.println("there is no picture baby");
+          //System.out.println("there is no picture baby");
         }
       }
     }
