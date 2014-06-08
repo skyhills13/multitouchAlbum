@@ -99,7 +99,7 @@ public class FolderImg extends FileObject {
               - lastTapTime;
 
           System.out.println("intervalTapTime : " + intervalTapTime);
-          if ((500 > intervalTapTime) && (intervalTapTime > 5)) {
+          if ((1000 > intervalTapTime) && (intervalTapTime > 200)) {
             lastTapTime = 0;
           } else {
             lastTapTime = System.currentTimeMillis();
@@ -207,6 +207,20 @@ public class FolderImg extends FileObject {
       System.out.println("first in");
       // successive touch action
     } else {
+      
+//      float leftX = ( getPositionX() - longestDistance );
+//      float rightX = ( getPositionX() + longestDistance );
+//      float bottomY = ( getPositionY() - longestDistance );
+//      float upperY = ( getPositionY() + longestDistance );
+//    
+//      for (TuioCursor tuioCursor : cursors) {
+//        if ( tuioCursor.getX() < leftX || tuioCursor.getX() > rightX )
+//          return true;
+//      
+//        if ( tuioCursor.getY() < bottomY || tuioCursor.getY() > upperY )
+//          return true;
+//      }
+    
       // All cursors Total move distance
       float totalMovedDistance = 0;
 
