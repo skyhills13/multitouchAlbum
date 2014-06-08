@@ -42,6 +42,7 @@ TuioClient client = null;
     // drawing
     for(FileObject fileObject : fileObjectList){
         // call multi-touch values and update
+        //return execute boolean result 
         fileObject.updateImageData(client);
         fileObject.display();
     }

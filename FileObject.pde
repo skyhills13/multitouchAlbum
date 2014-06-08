@@ -1,12 +1,10 @@
-
-import java.awt.Image;
 import java.util.Vector;
 
-// Processing & TUIO import
-import TUIO.*;
-import processing.*;
 import processing.core.PApplet;
 import processing.core.PImage;
+// Processing & TUIO import
+import TUIO.TuioClient;
+import TUIO.TuioCursor;
 
 
 public abstract class FileObject implements Touchable {
@@ -55,49 +53,57 @@ public abstract class FileObject implements Touchable {
     popMatrix();
   }
 
-  public void updateImageData(TuioClient client) {
+  public boolean updateImageData(TuioClient client) {
 
     Vector<TuioCursor> cursors = client.getTuioCursors();
     int aliveCursor = cursors.size();
 
     switch (aliveCursor) {
-    case 1:
-      touchOne(cursors);
-      break;
-
-    // if touch 2 fingers
-    // Image Size Modify
-    case 2:
-      touchTwo(cursors);
-      break;
-    case 3:
-      touchThree(cursors);
-      break;
-    default:
-      break;
+      case 7:
+      case 6:
+      case 5:
+      case 4:
+        return touchAboveFour(cursors);
+      case 3:
+        return touchThree(cursors);
+      case 2:
+        return touchTwo(cursors);
+      case 1:
+        return touchOne(cursors);
+      default:
+        break;
     }
+    
+    return false;
   }
 
   @Override
-  public void touchOne(Vector<TuioCursor> cursors) {
-    touchOneFinger(cursors);
+  public boolean touchOne(Vector<TuioCursor> cursors) {
+    return touchOneFinger(cursors);
   }
 
   @Override
-  public void touchTwo(Vector<TuioCursor> cursors) {
-    touchTwoFingers(cursors);
+  public boolean touchTwo(Vector<TuioCursor> cursors) {
+    return touchTwoFingers(cursors);
   }
 
   @Override
-  public void touchThree(Vector<TuioCursor> cursors) {
-    touchThreeFingers(cursors);
+  public boolean touchThree(Vector<TuioCursor> cursors) {
+    return touchThreeFingers(cursors);
   }
 
-  public abstract void touchOneFinger(Vector<TuioCursor> cursors);
+  @Override
+  public boolean touchAboveFour(Vector<TuioCursor> cursors) {
+    return touchAboveFourFingers(cursors);
+  }
+  
+  public abstract boolean touchOneFinger(Vector<TuioCursor> cursors);
 
-  public abstract void touchTwoFingers(Vector<TuioCursor> cursors);
+  public abstract boolean touchTwoFingers(Vector<TuioCursor> cursors);
 
-  public abstract void touchThreeFingers(Vector<TuioCursor> cursors);
+  public abstract boolean touchThreeFingers(Vector<TuioCursor> cursors);
+  
+  public abstract boolean touchAboveFourFingers(Vector<TuioCursor> cursors);
 
   // ************************************************************
 

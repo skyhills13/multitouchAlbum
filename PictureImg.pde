@@ -1,6 +1,5 @@
 import java.util.Vector;
 
-import processing.core.PImage;
 import TUIO.TuioCursor;
 
 public class PictureImg extends FileObject {
@@ -15,7 +14,7 @@ public class PictureImg extends FileObject {
   }
 
   @Override
-  public void touchOneFinger(Vector<TuioCursor> cursors) {
+  public boolean touchOneFinger(Vector<TuioCursor> cursors) {
     for (TuioCursor tuioCursor : cursors) {
       if (0 == tuioCursor.getCursorID()) {
         // print my fingers X and Y
@@ -30,15 +29,21 @@ public class PictureImg extends FileObject {
 
           setPositionX(tuioCursor.getX() * SCREEN_SIZE_X);
           setPositionY(tuioCursor.getY() * SCREEN_SIZE_Y);
+          
+          //inner area
+          return true;
         } else {
+          //outer area
+          return false;
           //System.out.println("there is no picture baby");
         }
       }
     }
+  return false;
   }
 
   @Override
-  public void touchTwoFingers(Vector<TuioCursor> cursors) {
+  public boolean touchTwoFingers(Vector<TuioCursor> cursors) {
     TuioCursor cursor1 = null;
     TuioCursor cursor2 = null;
     
@@ -67,11 +72,17 @@ public class PictureImg extends FileObject {
           * SCREEN_SIZE_X);
       setObjectHeight(Math.abs(cursor1.getY() - cursor2.getY())
           * SCREEN_SIZE_Y);
+      
+      //inner area
+      return true;
+    } else {
+      //outer area
+      return false;
     }
   }
 
   @Override
-  public void touchThreeFingers(Vector<TuioCursor> cursors) {
+  public boolean touchThreeFingers(Vector<TuioCursor> cursors) {
     
     TuioCursor cursor1 = null;
     TuioCursor cursor2 = null;
@@ -102,7 +113,15 @@ public class PictureImg extends FileObject {
       // angle( radian ) * 180 / Pi == angle ( degree )
       float gradient = (cursor1.getY() - cursor2.getY()) / (cursor1.getX() - cursor2.getX());
       setObjectRotate((float) (Math.atan(gradient) * 180.0 / Math.PI));
+      
+      //inner area
+      return true;
+    } else {
+      //outer area
+      return false;
     }
   }
-}
 
+  @Override
+  public boolean touchAboveFourFingers(Vector<TuioCursor> cursors) {return false;}
+}
