@@ -1,6 +1,6 @@
 import java.awt.Image;
 import java.util.Vector;
-// Processing & TUIO import
+
 import processing.core.*;
 import TUIO.*;
 
@@ -18,7 +18,9 @@ TuioClient client = null;
     // 1. Create TuioClient
     client = new TuioClient();
     client.connect(); 
-     
+    
+    //call frame rate per seconds?? 
+    frameRate(10);
     //PictureImg(float pictureWidth, float pictureHeight, float xPos, float yPos, String fileName){
      
      FolderImg folderImg = new FolderImg(100.0f, 100.0f, 600.0F, 400.0F,"folder.jpeg");
